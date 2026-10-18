@@ -1,0 +1,1515 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>
+    WriteFlow — AI Writing Analytics Studio | Real-Time Writing Intelligence
+  </title>
+  <meta name="description"
+    content="Transform your writing with AI Writing Analytics Studio. Real-time character and word count, Flesch readability scoring, keyword density, and intelligent editorial heuristics." />
+  <meta name="keywords"
+    content="word counter, character counter, readability calculator, text analyzer, writing assistant, keyword density" />
+
+  <!-- Open Graph / Twitter Metadata -->
+  <meta property="og:title" content="WriteFlow — AI Writing Analytics Studio" />
+  <meta property="og:description"
+    content="Analyze every word. Improve every sentence. Real-time writing statistics, readability grades, and editorial insights." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Tailwind CSS CDN (v3.4.17) & Google Fonts -->
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            mindaro: {
+              yellow: "#FFF275",
+              yellowLight: "#FFFBD1",
+              yellowHero: "#FFF574",
+              blue: "#2B48D4",
+              blueHover: "#2039AC",
+              blueLight: "#EEF2FF",
+              dark: "#211922",
+              surface: "#FBFBF9",
+              border: "#E5E5E0",
+            },
+            indigo: {
+              50: "#EEF2FF",
+              100: "#E0E7FF",
+              200: "#C7D2FE",
+              300: "#A5B4FC",
+              400: "#6980FA",
+              500: "#3D5AFE",
+              600: "#2B48D4",
+              700: "#2039AC",
+              800: "#1A2C87",
+              900: "#142168",
+              950: "#0D143D",
+            },
+            slate: {
+              50: "#FBFBF9",
+              100: "#F4F4F0",
+              200: "#E5E5E0",
+              300: "#D3D3CB",
+              400: "#9C97A1",
+              500: "#6B6572",
+              600: "#4A4450",
+              700: "#352E39",
+              800: "#28202B",
+              900: "#211922",
+              950: "#140E16",
+            },
+          },
+          fontFamily: {
+            sans: [
+              '"Plus Jakarta Sans"',
+              '"Pin Sans"',
+              "-apple-system",
+              "BlinkMacSystemFont",
+              '"Segoe UI"',
+              "Roboto",
+              "sans-serif",
+            ],
+          },
+          borderRadius: {
+            xs: "8px",
+            sm: "16px",
+            md: "24px",
+            lg: "32px",
+            pill: "50px",
+            full: "9999px",
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- External Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body
+  class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300">
+  <!-- Accessibility Skip Link -->
+  <a href="#analyzer" class="skip-link">Skip to writing editor</a>
+
+  <!-- Scroll Progress Bar -->
+  <div id="scrollProgress" aria-hidden="true"></div>
+
+  <!-- Section 1 — Minimal Preloader -->
+  <div id="preloader" aria-label="Loading application">
+    <div class="loader-spinner mb-4"></div>
+    <div class="flex items-center space-x-2 text-sm font-semibold tracking-wide text-slate-600 dark:text-slate-300">
+      <span
+        class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">W</span>
+      <span>WriteFlow Studio</span>
+    </div>
+  </div>
+
+  <!-- Section 2 — Announcement Bar -->
+  <div id="announcementBar" class="announcement-bar" role="region" aria-label="Product announcement">
+    <div class="flex items-center space-x-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+      <span
+        class="px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 text-xs font-semibold">Privacy
+        First</span>
+      <span>100% Client-side writing intelligence — Your words never leave your
+        browser.</span>
+    </div>
+    <button id="dismissAnnouncementBtn" class="announcement-close-btn" aria-label="Dismiss announcement">
+      &times;
+    </button>
+  </div>
+
+  <!-- Section 3 — Responsive Navigation -->
+  <header class="navbar-sticky">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <!-- Brand Logo -->
+      <a href="#hero" class="flex items-center space-x-3 text-decoration-none group">
+        <span
+          class="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white font-black text-lg shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform">
+          W
+        </span>
+        <div>
+          <span class="font-extrabold text-slate-900 dark:text-white text-lg tracking-tight">WriteFlow</span>
+          <span class="hidden lg:inline-block ml-2 text-xs font-medium text-slate-500 dark:text-slate-400">AI Writing
+            Studio</span>
+        </div>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav class="hidden md:flex items-center space-x-6 text-sm font-medium text-slate-600 dark:text-slate-300"
+        aria-label="Primary navigation">
+        <a href="#hero" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Home</a>
+        <a href="#analyzer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Analyzer</a>
+        <a href="#features" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Features</a>
+        <a href="#insights-section"
+          class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Insights</a>
+        <a href="#tips" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Tips</a>
+        <a href="#faq" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">FAQ</a>
+      </nav>
+
+      <!-- Right Controls & CTA -->
+      <div class="flex items-center space-x-3">
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" aria-label="Toggle light or dark theme" class="btn-icon">
+          <span id="themeIconSun" class="hidden text-base">☀️</span>
+          <span id="themeIconMoon" class="text-base">🌙</span>
+        </button>
+
+        <!-- CTA Start Writing Button -->
+        <a href="#analyzer" class="hidden sm:inline-flex btn-primary text-sm py-2 px-4 shadow-sm">
+          <span>Start Writing</span>
+          <span>&rarr;</span>
+        </a>
+
+        <!-- Mobile Hamburger Button -->
+        <button id="mobileMenuToggle" class="md:hidden btn-icon p-2" aria-label="Toggle mobile menu"
+          aria-expanded="false">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Nav Panel -->
+    <div id="mobileNavPanel" class="mobile-nav-panel md:hidden">
+      <a href="#hero" class="text-sm font-medium py-2 text-slate-700 dark:text-slate-200">Home</a>
+      <a href="#analyzer" class="text-sm font-medium py-2 text-slate-700 dark:text-slate-200">Analyzer</a>
+      <a href="#features" class="text-sm font-medium py-2 text-slate-700 dark:text-slate-200">Features</a>
+      <a href="#insights-section" class="text-sm font-medium py-2 text-slate-700 dark:text-slate-200">Insights</a>
+      <a href="#tips" class="text-sm font-medium py-2 text-slate-700 dark:text-slate-200">Tips</a>
+      <a href="#faq" class="text-sm font-medium py-2 text-slate-700 dark:text-slate-200">FAQ</a>
+      <a href="#analyzer" class="btn-primary text-center text-sm py-2.5 mt-2">Start Writing &rarr;</a>
+    </div>
+  </header>
+
+  <!-- Section 4 — Hero Section -->
+  <section id="hero" class="relative pt-12 pb-16 sm:pt-20 sm:pb-24 px-4 sm:px-6 overflow-hidden">
+    <!-- Ambient Background Lighting -->
+    <div class="orb-glow bg-indigo-500 w-[500px] h-[500px] -top-32 -left-32"></div>
+    <div class="orb-glow bg-violet-500 w-[600px] h-[600px] -bottom-48 -right-48" style="animation-delay: 2s"></div>
+
+    <div class="max-w-5xl mx-auto text-center relative z-10">
+      <!-- Privacy Badge -->
+      <div
+        class="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-xs sm:text-sm font-medium mb-6">
+        <span>🔒</span>
+        <span>100% In-Browser Privacy • Zero Server Transmission</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1
+        class="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.1] mb-6">
+        Analyze Every Word. <br class="hidden sm:inline" />
+        <span class="text-gradient">Improve Every Sentence.</span>
+      </h1>
+
+      <!-- Supporting Copy -->
+      <p class="text-base sm:text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed mb-10">
+        Understand your writing in real time with useful text statistics,
+        readability insights, keyword analysis, and practical suggestions—all
+        in one focused workspace.
+      </p>
+
+      <!-- Hero Actions -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
+        <a href="#analyzer" class="w-full sm:w-auto btn-primary text-base py-3.5 px-8 shadow-lg shadow-indigo-600/30">
+          <span>Start Writing</span>
+          <span class="text-lg">&rarr;</span>
+        </a>
+        <a href="#features" class="w-full sm:w-auto btn-secondary text-base py-3.5 px-8">
+          <span>Explore Features</span>
+        </a>
+      </div>
+
+      <!-- Hero Analytical Preview Chips -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto text-left">
+        <div
+          class="p-4 rounded-xl bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 backdrop-blur-sm shadow-sm">
+          <div class="text-xs text-slate-400 font-semibold uppercase">
+            Words & Chars
+          </div>
+          <div class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-1">
+            Live DOM Updates
+          </div>
+          <div class="text-xs text-indigo-600 dark:text-indigo-400 mt-0.5">
+            Instant keystroke analysis
+          </div>
+        </div>
+        <div
+          class="p-4 rounded-xl bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 backdrop-blur-sm shadow-sm">
+          <div class="text-xs text-slate-400 font-semibold uppercase">
+            Readability
+          </div>
+          <div class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-1">
+            Flesch Grade Score
+          </div>
+          <div class="text-xs text-emerald-600 dark:text-emerald-400 mt-0.5">
+            Syllable & sentence ratio
+          </div>
+        </div>
+        <div
+          class="p-4 rounded-xl bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 backdrop-blur-sm shadow-sm">
+          <div class="text-xs text-slate-400 font-semibold uppercase">
+            Keywords
+          </div>
+          <div class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-1">
+            Density & Cloud
+          </div>
+          <div class="text-xs text-violet-600 dark:text-violet-400 mt-0.5">
+            Stop-word filtering
+          </div>
+        </div>
+        <div
+          class="p-4 rounded-xl bg-white/70 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 backdrop-blur-sm shadow-sm">
+          <div class="text-xs text-slate-400 font-semibold uppercase">
+            Suggestions
+          </div>
+          <div class="text-lg font-bold text-slate-800 dark:text-slate-100 mt-1">
+            Smart Heuristics
+          </div>
+          <div class="text-xs text-amber-600 dark:text-amber-400 mt-0.5">
+            Passive & filler alerts
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5 — Writing Workspace / Live Text Analyzer -->
+  <section id="analyzer" class="py-8 px-4 sm:px-6 relative z-10">
+    <div class="max-w-6xl mx-auto analyzer-container">
+      <!-- Editor Header & Focus Controls -->
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center space-x-2">
+          <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Live Writing Studio
+          </h2>
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"
+            title="Real-time analyzer active"></span>
+        </div>
+
+        <button id="exitFocusBtn"
+          class="hidden btn-secondary text-xs py-1.5 px-3 border-indigo-400 text-indigo-600 dark:text-indigo-400">
+          <span>&times;</span>
+          <span>Exit Focus Mode</span>
+        </button>
+      </div>
+
+      <!-- Main Editor Card -->
+      <div
+        class="glass-panel overflow-hidden border-2 border-indigo-500/20 focus-within:border-indigo-500/60 transition-all">
+        <!-- Editor Toolbar -->
+        <div
+          class="flex flex-wrap items-center justify-between gap-2 p-3 bg-slate-50/90 dark:bg-slate-800/90 border-b border-slate-200 dark:border-slate-700 text-xs">
+          <!-- Left Action Buttons -->
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="insertSampleBtn" class="btn-secondary py-1.5 px-3 text-xs"
+              title="Insert a sample editorial paragraph">
+              <span>📝</span>
+              <span>Insert Sample</span>
+            </button>
+            <button id="copyTextBtn" class="btn-secondary py-1.5 px-3 text-xs" title="Copy entire text to clipboard">
+              <span>📋</span>
+              <span>Copy Text</span>
+            </button>
+            <button id="clearTextBtn"
+              class="btn-secondary py-1.5 px-3 text-xs text-rose-600 dark:text-rose-400 hover:border-rose-400"
+              title="Clear editor content">
+              <span>🗑️</span>
+              <span>Clear</span>
+            </button>
+          </div>
+
+          <!-- Right Preference Controls -->
+          <div class="flex items-center gap-3">
+            <!-- Font Size -->
+            <div class="flex items-center space-x-1">
+              <label for="fontSizeSelect" class="text-slate-500 dark:text-slate-400 text-xs">Size:</label>
+              <select id="fontSizeSelect"
+                class="bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-xs text-slate-700 dark:text-slate-200 focus:outline-none">
+                <option value="sm">Small</option>
+                <option value="md" selected>Medium</option>
+                <option value="lg">Large</option>
+              </select>
+            </div>
+
+            <!-- Word Wrap Toggle -->
+            <button id="wordWrapBtn" class="btn-icon p-1.5 text-xs text-indigo-600 font-medium"
+              title="Toggle Word Wrap">
+              <span>Wrap: On</span>
+            </button>
+
+            <!-- Focus Mode Button -->
+            <button id="focusModeBtn" class="btn-secondary py-1 px-2.5 text-xs text-indigo-600 dark:text-indigo-400"
+              title="Enter distraction-free writing mode">
+              <span>🎯</span>
+              <span>Focus Mode</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Gemini AI Writing Intelligence Sub-Toolbar -->
+        <div
+          class="flex flex-wrap items-center justify-between gap-2 px-4 py-2 bg-gradient-to-r from-indigo-50/90 via-violet-50/90 to-pink-50/90 dark:from-indigo-950/40 dark:via-violet-950/40 dark:to-pink-950/40 border-b border-indigo-100 dark:border-indigo-900/60 text-xs">
+          <div class="flex items-center space-x-2">
+            <span
+              class="inline-flex items-center px-2 py-0.5 rounded-full bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold text-[10px] tracking-wide shadow-sm">
+              ✨ GEMINI AI
+            </span>
+            <span class="text-slate-600 dark:text-slate-300 font-medium hidden sm:inline">Assist Tools:</span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center gap-1.5">
+            <button id="geminiPolishBtn" class="btn-gemini-action" title="Improve grammar, clarity & active voice">
+              <span>✨ Polish Prose</span>
+            </button>
+
+            <div class="relative inline-block">
+              <button id="geminiToneDropdownBtn" class="btn-gemini-action" title="Rewrite in different tone"
+                aria-expanded="false">
+                <span>🎭 Tone Rewrite &dtrif;</span>
+              </button>
+              <div id="geminiToneMenu"
+                class="hidden absolute left-0 mt-1 w-40 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-xl z-50 py-1 text-xs">
+                <button
+                  class="gemini-tone-opt w-full text-left px-3 py-1.5 hover:bg-indigo-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200"
+                  data-tone="professional">
+                  💼 Professional
+                </button>
+                <button
+                  class="gemini-tone-opt w-full text-left px-3 py-1.5 hover:bg-indigo-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200"
+                  data-tone="concise">
+                  ⚡ Punchy & Brief
+                </button>
+                <button
+                  class="gemini-tone-opt w-full text-left px-3 py-1.5 hover:bg-indigo-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200"
+                  data-tone="academic">
+                  🎓 Academic Scholarly
+                </button>
+                <button
+                  class="gemini-tone-opt w-full text-left px-3 py-1.5 hover:bg-indigo-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200"
+                  data-tone="casual">
+                  ☕ Casual Friendly
+                </button>
+              </div>
+            </div>
+
+            <button id="geminiSummaryBtn" class="btn-gemini-action" title="Generate an executive TL;DR summary">
+              <span>📋 Executive TL;DR</span>
+            </button>
+
+            <button id="geminiHeadlinesBtn" class="btn-gemini-action" title="Generate 5 catchy hooks & titles">
+              <span>💡 Catchy Headlines</span>
+            </button>
+
+            <button id="geminiContinueBtn" class="btn-gemini-action" title="Generate next paragraph">
+              <span>✍️ Continue Draft</span>
+            </button>
+
+            <button id="geminiKeyBtn" class="btn-icon p-1 text-[11px] text-slate-500 hover:text-indigo-600"
+              title="Gemini API Key Settings">
+              <span>⚙️</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Textarea Surface -->
+        <div class="relative bg-white dark:bg-slate-900">
+          <label for="editorTextarea" class="sr-only">Writing text area input</label>
+          <textarea id="editorTextarea"
+            placeholder="Type or paste your content here to inspect real-time character counts, word density, readability grade, and stylistic recommendations..."
+            spellcheck="true" aria-label="Text editor for real-time writing analytics"></textarea>
+        </div>
+
+        <!-- Editor Bottom Status Bar -->
+        <div
+          class="flex flex-wrap items-center justify-between px-4 py-2 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500 dark:text-slate-400">
+          <div class="flex items-center space-x-4">
+            <span>Encoding: UTF-8</span>
+            <span>Mode: Continuous Input Listener</span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span>Client-Side Sandbox</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 6 — Writing Statistics Dashboard -->
+  <section class="py-8 px-4 sm:px-6 relative z-10">
+    <div class="max-w-6xl mx-auto">
+      <div class="mb-5 flex items-center justify-between">
+        <div>
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">
+            Core Writing Metrics
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Deterministic metrics computed instantly on every keystroke
+          </p>
+        </div>
+      </div>
+
+      <!-- 8 Core Metrics Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+        <!-- Total Words -->
+        <div class="stat-card">
+          <div class="flex items-center justify-between">
+            <span class="stat-label">Words</span>
+            <span class="stat-icon bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">✍️</span>
+          </div>
+          <div id="statWords" class="stat-value">0</div>
+          <span class="text-xs text-slate-400">Whitespace-delimited</span>
+        </div>
+
+        <!-- Characters with Spaces -->
+        <div class="stat-card">
+          <div class="flex items-center justify-between">
+            <span class="stat-label">Characters</span>
+            <span class="stat-icon bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-blue-400">🔤</span>
+          </div>
+          <div id="statChars" class="stat-value">0</div>
+          <span class="text-xs text-slate-400">Including spaces</span>
+        </div>
+
+        <!-- Characters without Spaces -->
+        <div class="stat-card">
+          <div class="flex items-center justify-between">
+            <span class="stat-label">Chars (No Spaces)</span>
+            <span class="stat-icon bg-cyan-50 dark:bg-cyan-950/60 text-cyan-600 dark:text-cyan-400">📐</span>
+          </div>
+          <div id="statCharsNoSpaces" class="stat-value">0</div>
+          <span class="text-xs text-slate-400">Pure letter/number count</span>
+        </div>
+
+        <!-- Sentences -->
+        <div class="stat-card">
+          <div class="flex items-center justify-between">
+            <span class="stat-label">Sentences</span>
+            <span class="stat-icon bg-violet-50 dark:bg-violet-950/60 text-violet-600 dark:text-violet-400">💬</span>
+          </div>
+          <div id="statSentences" class="stat-value">0</div>
+          <span class="text-xs text-slate-400">Punctuation delimited</span>
+        </div>
+
+        <!-- Paragraphs -->
+        <div class="stat-card">
+          <div class="flex items-center justify-between">
+            <span class="stat-label">Paragraphs</span>
+            <span class="stat-icon bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">📑</span>
+          </div>
+          <div id="statParagraphs" class="stat-value">0</div>
+          <span class="text-xs text-slate-400">Block linebreaks</span>
+        </div>
+
+        <!-- Reading Time -->
+        <div class="stat-card">
+          <div class="flex items-center justify-between">
+            <span class="stat-label">Reading Time</span>
+            <span
+              class="stat-icon bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">⏱️</span>
+          </div>
+          <div id="statReadingTime" class="stat-value text-xl sm:text-2xl">
+            0 min
+          </div>
+          <span class="text-xs text-slate-400">At ~225 words/min</span>
+        </div>
+
+        <!-- Speaking Time -->
+        <div class="stat-card">
+          <div class="flex items-center justify-between">
+            <span class="stat-label">Speaking Time</span>
+            <span class="stat-icon bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400">🎙️</span>
+          </div>
+          <div id="statSpeakingTime" class="stat-value text-xl sm:text-2xl">
+            0 min
+          </div>
+          <span class="text-xs text-slate-400">At ~145 words/min</span>
+        </div>
+
+        <!-- Avg Word Length -->
+        <div class="stat-card">
+          <div class="flex items-center justify-between">
+            <span class="stat-label">Avg Word Length</span>
+            <span class="stat-icon bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400">📏</span>
+          </div>
+          <div id="statAvgWordLength" class="stat-value text-xl sm:text-2xl">
+            0.0 ch
+          </div>
+          <span class="text-xs text-slate-400">Characters per word</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 7 — Readability & Section 10 — Writing Goals -->
+  <section class="py-6 px-4 sm:px-6 relative z-10">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+      <!-- Readability & Quality Card -->
+      <div class="glass-panel p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">📊</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-base">
+              Flesch Readability Scoring
+            </h3>
+          </div>
+          <span id="readabilityLevelBadge"
+            class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+            Waiting for text
+          </span>
+        </div>
+
+        <!-- Score Gauge -->
+        <div class="flex items-baseline space-x-3 mb-2">
+          <span id="readabilityScore" class="text-4xl font-extrabold text-indigo-600 dark:text-indigo-400">--</span>
+          <span class="text-xs text-slate-400">/ 100 Ease Score</span>
+        </div>
+
+        <div class="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden mb-6">
+          <div id="readabilityProgressBar"
+            class="h-full bg-gradient-to-r from-rose-500 via-amber-500 to-emerald-500 rounded-full transition-all duration-300"
+            style="width: 0%"></div>
+        </div>
+
+        <!-- Supporting Metrics -->
+        <div class="grid grid-cols-3 gap-2 pt-3 border-t border-slate-100 dark:border-slate-800 text-center">
+          <div>
+            <div class="text-xs text-slate-400">Sentence Length</div>
+            <div id="avgSentenceLength" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">
+              0.0 words
+            </div>
+          </div>
+          <div>
+            <div class="text-xs text-slate-400">Long Sentences</div>
+            <div id="longSentencePct" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">
+              0%
+            </div>
+          </div>
+          <div>
+            <div class="text-xs text-slate-400">Vocab Diversity</div>
+            <div id="vocabularyVariety" class="text-sm font-bold text-slate-800 dark:text-slate-200 mt-0.5">
+              0%
+            </div>
+          </div>
+        </div>
+
+        <p class="text-[11px] text-slate-400 dark:text-slate-500 mt-4 leading-normal">
+          * Flesch Reading Ease is a standardized mathematical estimate based
+          on average sentence length and syllables per word.
+        </p>
+      </div>
+
+      <!-- Writing Goal Tracker Card -->
+      <div class="glass-panel p-6 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-2">
+              <span class="text-xl">🎯</span>
+              <h3 class="font-bold text-slate-900 dark:text-white text-base">
+                Session Writing Goal
+              </h3>
+            </div>
+
+            <div class="flex items-center space-x-1.5">
+              <label for="goalInput" class="text-xs text-slate-500 dark:text-slate-400">Target:</label>
+              <input id="goalInput" type="number" min="50" max="10000" step="50" value="500"
+                class="w-20 px-2 py-1 text-xs font-semibold bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded text-right focus:outline-none" />
+              <span class="text-xs text-slate-400">words</span>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="flex items-baseline justify-between mb-2">
+            <span class="text-xs text-slate-500 dark:text-slate-400">Goal Completion</span>
+            <span id="goalProgressPct" class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">0%</span>
+          </div>
+
+          <div class="w-full bg-slate-100 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden mb-3">
+            <div id="goalProgressBar" class="h-full bg-indigo-600 rounded-full transition-all duration-300"
+              style="width: 0%"></div>
+          </div>
+
+          <div class="flex items-center justify-between text-xs">
+            <span id="goalRemainingWords" class="text-slate-500 dark:text-slate-400 font-medium">500 words
+              remaining</span>
+            <span id="goalSuccessBadge"
+              class="hidden text-xs font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950 px-2 py-0.5 rounded-full">
+              🎉 Target Achieved
+            </span>
+          </div>
+        </div>
+
+        <div
+          class="p-3.5 mt-6 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 text-xs text-slate-600 dark:text-slate-300 flex items-center space-x-3">
+          <span class="text-xl">💡</span>
+          <span>Setting incremental session targets (e.g., 250 or 500 words)
+            prevents mental burnout and promotes deliberate writing
+            momentum.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 8 — Keyword Explorer & Section 9 — Smart Writing Insights -->
+  <section id="insights-section" class="py-8 px-4 sm:px-6 relative z-10">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Keyword & Frequency Panel -->
+      <div class="glass-panel p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">🔍</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-base">
+              Keyword Frequency & Density
+            </h3>
+          </div>
+
+          <!-- Exclude Stop Words Filter Toggle -->
+          <label class="flex items-center space-x-2 text-xs text-slate-500 dark:text-slate-400 cursor-pointer">
+            <input id="excludeStopWordsCheckbox" type="checkbox" checked
+              class="rounded border-slate-300 text-indigo-600 focus:ring-0" />
+            <span>Filter Stop Words</span>
+          </label>
+        </div>
+
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+          Density formula: (occurrences &divide; total words) &times; 100.
+          Useful for checking repetitive thematic focus.
+        </p>
+
+        <!-- Top Keywords List -->
+        <div id="keywordList" class="space-y-1 mb-6">
+          <div class="text-xs text-slate-400 py-4 text-center">
+            Start typing to discover frequent keywords and density
+            distribution.
+          </div>
+        </div>
+
+        <!-- Keyword Cloud -->
+        <div>
+          <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">
+            Interactive Keyword Cloud (Click to copy)
+          </div>
+          <div id="keywordCloud"
+            class="flex flex-wrap gap-2 min-h-[50px] p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800">
+            <div class="text-xs text-slate-400 py-2 text-center w-full">
+              Keyword tags will populate as you type.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Smart Writing Insights & Recommendations Panel -->
+      <div class="glass-panel p-6">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center space-x-2">
+            <span class="text-xl">💡</span>
+            <h3 class="font-bold text-slate-900 dark:text-white text-base">
+              Smart Writing Insights
+            </h3>
+          </div>
+          <span id="insightsCountBadge"
+            class="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
+            0
+          </span>
+        </div>
+
+        <p class="text-xs text-slate-500 dark:text-slate-400 mb-4">
+          Deterministic stylistic heuristics highlighting passive voice,
+          overused fillers, dense paragraphs, and sentence cadence.
+        </p>
+
+        <!-- Insights Dynamic List -->
+        <div id="insightsList" class="space-y-3">
+          <div
+            class="p-4 rounded-xl border border-dashed border-slate-200 dark:border-slate-800 text-center text-xs text-slate-400">
+            No insights yet. Type or paste your draft above to trigger
+            real-time stylistic heuristics.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 11 — Writing Tips and Learning Center -->
+  <section id="tips"
+    class="py-16 px-4 sm:px-6 bg-slate-100/50 dark:bg-slate-800/30 border-y border-slate-200 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold tracking-widest text-indigo-600 dark:text-indigo-400 uppercase">Editorial
+          Mastery</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
+          Writing Tips & Best Practices
+        </h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
+          Proven techniques to heighten sentence clarity, reduce friction, and
+          keep readers engaged.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <article
+          class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="text-2xl mb-3">✂️</div>
+          <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-2">
+            Ruthlessly Prune Filler Words
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Words like "really", "very", "basically", and "actually" dilute
+            persuasive authority. Replace weak phrases with vivid, precise
+            action verbs.
+          </p>
+        </article>
+
+        <article
+          class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="text-2xl mb-3">🌊</div>
+          <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-2">
+            Vary Your Sentence Cadence
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Alternate short, emphatic sentences with richer explanatory ones.
+            Consistent length lulls readers; rhythm captivates their
+            attention.
+          </p>
+        </article>
+
+        <article
+          class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="text-2xl mb-3">📱</div>
+          <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-2">
+            Structure for Digital Scanning
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Over 60% of modern reading happens on mobile screens. Keep
+            paragraphs under 3-4 sentences and employ descriptive headings.
+          </p>
+        </article>
+
+        <article
+          class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="text-2xl mb-3">🎯</div>
+          <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-2">
+            Favor Active Voice
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Passive constructions like "the study was conducted by our team"
+            sound bureaucratic. Write "our team conducted the study" for
+            instant impact.
+          </p>
+        </article>
+
+        <article
+          class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="text-2xl mb-3">🪝</div>
+          <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-2">
+            Hook in the First 30 Words
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            State your primary thesis or conflict immediately. Delaying the
+            core value proposition triggers cognitive drop-off.
+          </p>
+        </article>
+
+        <article
+          class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm">
+          <div class="text-2xl mb-3">🗣️</div>
+          <h3 class="text-base font-bold text-slate-800 dark:text-slate-100 mb-2">
+            Read Your Draft Aloud
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Your tongue catches stumbling blocks that eyes overlook. If you
+            run out of breath reading a sentence, your reader will too.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 12 — How It Works -->
+  <section id="how-it-works" class="py-16 px-4 sm:px-6">
+    <div class="max-w-5xl mx-auto text-center">
+      <span class="text-xs font-bold tracking-widest text-indigo-600 dark:text-indigo-400 uppercase">Process</span>
+      <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1 mb-12">
+        How WriteFlow Works
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+        <div class="relative p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <div
+            class="w-10 h-10 rounded-xl bg-indigo-600 text-white font-black text-lg flex items-center justify-center mb-4">
+            1
+          </div>
+          <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">
+            Write or Paste
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Type directly into the distraction-free canvas or paste drafts
+            from Google Docs, Word, or Markdown files.
+          </p>
+        </div>
+
+        <div class="relative p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <div
+            class="w-10 h-10 rounded-xl bg-violet-600 text-white font-black text-lg flex items-center justify-center mb-4">
+            2
+          </div>
+          <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">
+            Analyze in Real-Time
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Watch live character counts, Flesch scores, speaking times, and
+            keyword density calculate locally without server latency.
+          </p>
+        </div>
+
+        <div class="relative p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <div
+            class="w-10 h-10 rounded-xl bg-pink-600 text-white font-black text-lg flex items-center justify-center mb-4">
+            3
+          </div>
+          <h3 class="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">
+            Refine & Improve
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Apply actionable heuristic suggestions, trim filler phrases, hit
+            word limits, and copy finalized prose with one click.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 13 — Use Cases -->
+  <section id="use-cases"
+    class="py-16 px-4 sm:px-6 bg-slate-100/50 dark:bg-slate-800/30 border-y border-slate-200 dark:border-slate-800">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold tracking-widest text-indigo-600 dark:text-indigo-400 uppercase">Workflows</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
+          Tailored for Every Writing Discipline
+        </h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
+          Whether submitting research or refining marketing copy, WriteFlow
+          delivers calibrated statistics.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <span class="text-2xl">🎓</span>
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base mt-2 mb-1">
+            Students & Academics
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Track essay length requirements, monitor syllable depth, and
+            ensure academic research meets publication standards.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <span class="text-2xl">✍️</span>
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base mt-2 mb-1">
+            Bloggers & Creators
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Tune articles to an optimal 6th-8th grade reading level for viral
+            engagement and calculate accurate reading time badges.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <span class="text-2xl">💼</span>
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base mt-2 mb-1">
+            Copywriters & Freelancers
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Eliminate fluff from landing page copy, monitor headline character
+            counts, and deliver punchy sales scripts.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <span class="text-2xl">📄</span>
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base mt-2 mb-1">
+            Job Seekers
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Craft resumes and cover letters that respect strict length
+            boundaries and highlight active achievement verbs.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <span class="text-2xl">📊</span>
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base mt-2 mb-1">
+            Corporate Professionals
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Streamline executive briefings, board memos, and emails to reduce
+            reading fatigue and drive rapid decision-making.
+          </p>
+        </div>
+
+        <div class="p-6 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <span class="text-2xl">🔎</span>
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base mt-2 mb-1">
+            SEO Content Editors
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            Inspect keyword density percentages and weed out repetitive
+            phrases without risk of keyword stuffing penalties.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 14 — Privacy & Section 15 — Feature Overview -->
+  <section id="features" class="py-16 px-4 sm:px-6">
+    <div class="max-w-6xl mx-auto">
+      <!-- Privacy Banner -->
+      <div id="privacy"
+        class="p-8 rounded-3xl bg-gradient-to-r from-indigo-900 to-slate-900 text-white mb-16 shadow-xl relative overflow-hidden">
+        <div class="relative z-10 max-w-2xl">
+          <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-white/10 text-xs font-semibold mb-4">
+            <span>🛡️</span>
+            <span>Zero-Knowledge Architecture</span>
+          </div>
+          <h2 class="text-2xl sm:text-3xl font-bold mb-3">
+            Your Words Remain Exclusively Yours
+          </h2>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed mb-6">
+            Unlike cloud-hosted AI tools that train on user inputs, WriteFlow
+            performs every calculation directly in your web browser's memory
+            using vanilla JavaScript. No text is ever uploaded, cached on
+            remote servers, or shared with third parties.
+          </p>
+          <div class="flex flex-wrap gap-4 text-xs font-medium text-indigo-200">
+            <span>✓ No Server Tracking</span>
+            <span>✓ No Account Required</span>
+            <span>✓ LocalStorage Only For Theme</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Capabilities Showcase -->
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span
+          class="text-xs font-bold tracking-widest text-indigo-600 dark:text-indigo-400 uppercase">Architecture</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
+          Platform Highlights
+        </h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <div class="text-xl mb-2">⚡</div>
+          <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">
+            Sub-Millisecond Engine
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Optimized string tokenization ensures zero typing latency even on
+            5,000+ word essays.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <div class="text-xl mb-2">🌓</div>
+          <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">
+            Dual Adaptive Themes
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Full design system support for both pristine light editorial and
+            midnight dark palettes.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <div class="text-xl mb-2">♿</div>
+          <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">
+            WCAG 2.2 AA Compliant
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Full keyboard navigation, semantic markup landmarks, and
+            accessible color contrast ratios.
+          </p>
+        </div>
+        <div class="p-5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+          <div class="text-xl mb-2">📦</div>
+          <h3 class="font-bold text-sm text-slate-800 dark:text-slate-100">
+            Zero Heavy Frameworks
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+            Clean semantic HTML5, pure CSS3, and ES6+ vanilla JavaScript
+            without bloated bundles.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 16 — FAQ Accordion -->
+  <section id="faq"
+    class="py-16 px-4 sm:px-6 bg-slate-100/50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center max-w-2xl mx-auto mb-12">
+        <span class="text-xs font-bold tracking-widest text-indigo-600 dark:text-indigo-400 uppercase">Questions</span>
+        <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white mt-1">
+          Frequently Asked Questions
+        </h2>
+        <p class="text-sm text-slate-600 dark:text-slate-400 mt-2">
+          Transparent answers regarding analysis logic, privacy, and metrics
+          calculation.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <div class="accordion-item glass-panel px-6 py-1">
+          <button class="accordion-header" aria-expanded="false">
+            <span>What does AI Writing Analytics Studio do?</span>
+            <span class="accordion-icon text-lg">&darr;</span>
+          </button>
+          <div class="accordion-content">
+            WriteFlow transforms the standard character and word counter into
+            an editorial intelligence workspace. It delivers instant character
+            and word counts, Flesch reading ease grades, reading and speaking
+            durations, keyword frequency clouds, and deterministic heuristic
+            feedback on filler words, sentence length, and passive voice.
+          </div>
+        </div>
+
+        <div class="accordion-item glass-panel px-6 py-1">
+          <button class="accordion-header" aria-expanded="false">
+            <span>How are words and characters counted?</span>
+            <span class="accordion-icon text-lg">&darr;</span>
+          </button>
+          <div class="accordion-content">
+            Characters are tallied directly via string length (both total and
+            with whitespace stripped). Words are tokenized by trimming
+            leading/trailing whitespace and splitting across consecutive
+            whitespace characters, ensuring duplicate spaces or linebreaks
+            never distort counts.
+          </div>
+        </div>
+
+        <div class="accordion-item glass-panel px-6 py-1">
+          <button class="accordion-header" aria-expanded="false">
+            <span>Does the analyzer update in real time?</span>
+            <span class="accordion-icon text-lg">&darr;</span>
+          </button>
+          <div class="accordion-content">
+            Yes. Every statistic, grade, and keyword frequency recalculates
+            synchronously on the browser's native `input` event as you type,
+            delete, or paste text.
+          </div>
+        </div>
+
+        <div class="accordion-item glass-panel px-6 py-1">
+          <button class="accordion-header" aria-expanded="false">
+            <span>How is reading and speaking time estimated?</span>
+            <span class="accordion-icon text-lg">&darr;</span>
+          </button>
+          <div class="accordion-content">
+            Estimated reading time is calibrated at a standard average rate of
+            225 words per minute (wpm), while speaking time is calculated at
+            145 wpm, typical for conference talks and public addresses.
+          </div>
+        </div>
+
+        <div class="accordion-item glass-panel px-6 py-1">
+          <button class="accordion-header" aria-expanded="false">
+            <span>How is the readability score calculated?</span>
+            <span class="accordion-icon text-lg">&darr;</span>
+          </button>
+          <div class="accordion-content">
+            We use the proven Flesch Reading Ease formula:
+            <code>206.835 - 1.015 &times; (words / sentences) - 84.6 &times;
+                (syllables / words)</code>. Scores from 90–100 indicate easy 5th grade text, 60–70
+            represents standard everyday prose, while scores below 50 indicate
+            complex academic literature.
+          </div>
+        </div>
+
+        <div class="accordion-item glass-panel px-6 py-1">
+          <button class="accordion-header" aria-expanded="false">
+            <span>Does WriteFlow store or transmit my writing?</span>
+            <span class="accordion-icon text-lg">&darr;</span>
+          </button>
+          <div class="accordion-content">
+            No. All computation occurs 100% locally in your browser's
+            client-side memory. Your writing is never transmitted across the
+            network, stored on external databases, or used for model training.
+          </div>
+        </div>
+
+        <div class="accordion-item glass-panel px-6 py-1">
+          <button class="accordion-header" aria-expanded="false">
+            <span>Can I use the tool for academic papers and theses?</span>
+            <span class="accordion-icon text-lg">&darr;</span>
+          </button>
+          <div class="accordion-content">
+            Absolutely. WriteFlow is frequently used by university students
+            and researchers to ensure essays strictly adhere to word count
+            limits and to catch overly complex, run-on sentences before
+            submission.
+          </div>
+        </div>
+
+        <div class="accordion-item glass-panel px-6 py-1">
+          <button class="accordion-header" aria-expanded="false">
+            <span>Does keyword density guarantee better SEO?</span>
+            <span class="accordion-icon text-lg">&darr;</span>
+          </button>
+          <div class="accordion-content">
+            Keyword density is a descriptive diagnostic metric, not a search
+            ranking guarantee. Search engines prioritize depth, helpfulness,
+            and searcher intent over specific percentage thresholds. WriteFlow
+            helps you verify topical relevance without accidental keyword
+            stuffing.
+          </div>
+        </div>
+
+        <div class="accordion-item glass-panel px-6 py-1">
+          <button class="accordion-header" aria-expanded="false">
+            <span>Does the application require an active internet
+              connection?</span>
+            <span class="accordion-icon text-lg">&darr;</span>
+          </button>
+          <div class="accordion-content">
+            Once the page loads, the core analyzer works completely offline
+            because all analysis logic and heuristics are compiled directly in
+            client-side JavaScript.
+          </div>
+        </div>
+
+        <div class="accordion-item glass-panel px-6 py-1">
+          <button class="accordion-header" aria-expanded="false">
+            <span>Does WriteFlow use an external AI API or LLM?</span>
+            <span class="accordion-icon text-lg">&darr;</span>
+          </button>
+          <div class="accordion-content">
+            In keeping with honest engineering practices, the current version
+            utilizes transparent, deterministic JavaScript algorithms and
+            regex heuristics rather than opaque cloud LLMs, providing instant,
+            cost-free, and private analytics.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 17 — Final Call to Action -->
+  <section id="cta-bottom" class="py-20 px-4 sm:px-6 relative overflow-hidden">
+    <div class="orb-glow bg-indigo-500 w-96 h-96 top-0 left-1/2 -translate-x-1/2"></div>
+
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+      <h2 class="text-3xl sm:text-5xl font-black text-slate-900 dark:text-white tracking-tight mb-4">
+        Make Every Word Work Better.
+      </h2>
+      <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8">
+        Start writing, explore your text statistics, and turn useful insights
+        into clearer, more compelling content today.
+      </p>
+      <a href="#analyzer" class="btn-primary text-base py-3.5 px-8 shadow-xl shadow-indigo-600/30">
+        <span>Analyze Your Text Now</span>
+        <span class="text-lg">&rarr;</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- Section 18 — Premium Enterprise-Grade Footer -->
+  <footer
+    class="w-full border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md pt-16 pb-12 px-4 sm:px-6 relative overflow-hidden text-xs">
+    <!-- Ambient glow in footer background -->
+    <div class="orb-glow bg-indigo-500/10 w-96 h-96 -bottom-32 -left-32"></div>
+    <div class="orb-glow bg-violet-500/10 w-96 h-96 -bottom-32 -right-32"></div>
+
+    <div class="max-w-6xl mx-auto relative z-10">
+      <!-- 4-Column Organized Grid -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-12 pb-12 border-b border-slate-200/80 dark:border-slate-800">
+        <!-- Brand & Mission Column (Spans 2 columns on lg) -->
+        <div class="lg:col-span-2 space-y-4">
+          <a href="#hero" class="flex items-center space-x-3 text-decoration-none group">
+            <span
+              class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white font-black text-xl shadow-md shadow-indigo-500/25 group-hover:scale-105 transition-transform">
+              W
+            </span>
+            <div>
+              <span class="font-extrabold text-slate-900 dark:text-white text-lg tracking-tight">WriteFlow</span>
+              <span class="block text-[11px] font-medium text-slate-500 dark:text-slate-400">AI Writing Analytics
+                Studio</span>
+            </div>
+          </a>
+
+          <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed max-w-sm">
+            Analyze every word. Improve every sentence. Real-time writing
+            statistics, Flesch readability scoring, keyword density, and
+            Gemini AI assistance—built 100% client-side for absolute privacy.
+          </p>
+
+          <!-- System Status Badge -->
+          <div
+            class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 text-emerald-700 dark:text-emerald-300 text-[11px] font-medium">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>All Systems Operational &bull; 100% In-Browser Memory</span>
+          </div>
+        </div>
+
+        <!-- Column 2: Platform Features -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+            Workspace
+          </h4>
+          <ul class="space-y-2 text-slate-600 dark:text-slate-400 font-medium">
+            <li>
+              <a href="#analyzer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Live Text
+                Editor</a>
+            </li>
+            <li>
+              <a href="#analyzer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Core
+                Metrics Dashboard</a>
+            </li>
+            <li>
+              <a href="#analyzer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Flesch
+                Readability Score</a>
+            </li>
+            <li>
+              <a href="#analyzer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Session
+                Word Goal</a>
+            </li>
+            <li>
+              <a href="#analyzer"
+                class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Distraction-Free Focus</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Column 3: Intelligence & Insights -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+            Intelligence
+          </h4>
+          <ul class="space-y-2 text-slate-600 dark:text-slate-400 font-medium">
+            <li>
+              <a href="#insights-section"
+                class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Keyword Density & Cloud</a>
+            </li>
+            <li>
+              <a href="#insights-section"
+                class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Smart Editorial Insights</a>
+            </li>
+            <li>
+              <a href="#analyzer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Gemini
+                Prose Polish</a>
+            </li>
+            <li>
+              <a href="#analyzer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Gemini Tone
+                Rewrite</a>
+            </li>
+            <li>
+              <a href="#analyzer" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Executive
+                TL;DR Summary</a>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Column 4: Resources & Trust -->
+        <div class="space-y-3">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white">
+            Resources & Trust
+          </h4>
+          <ul class="space-y-2 text-slate-600 dark:text-slate-400 font-medium">
+            <li>
+              <a href="#tips" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Writing Tips &
+                Best Practices</a>
+            </li>
+            <li>
+              <a href="#how-it-works" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">How
+                WriteFlow Works</a>
+            </li>
+            <li>
+              <a href="#use-cases" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Workflow
+                Use Cases</a>
+            </li>
+            <li>
+              <a href="#privacy" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Zero-Server
+                Privacy Guarantee</a>
+            </li>
+            <li>
+              <a href="#faq" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">Frequently Asked
+                Questions</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 dark:text-slate-400">
+        <!-- Copyright & Credits -->
+        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 text-center sm:text-left">
+          <span>&copy; 2026 WriteFlow Studio.</span>
+          <span class="hidden sm:inline">&bull;</span>
+          <span>Web Development Internship Product Showcase</span>
+        </div>
+
+        <!-- Micro Tech Stack Badges -->
+        <div class="flex flex-wrap items-center justify-center gap-1.5 text-[10px] font-mono font-semibold">
+          <span
+            class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">HTML5</span>
+          <span
+            class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">CSS3</span>
+          <span
+            class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Vanilla
+            JS</span>
+          <span
+            class="px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">Gemini
+            AI</span>
+          <span
+            class="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700">Lenis
+            Scroll</span>
+        </div>
+
+        <!-- Back to Top Button with Lenis Smooth Scroll -->
+        <div>
+          <a href="#hero"
+            class="btn-secondary py-1.5 px-3.5 text-xs text-slate-700 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 font-medium shadow-sm transition flex items-center space-x-1.5"
+            title="Smoothly scroll to top">
+            <span>&uarr;</span>
+            <span>Back to Top</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Clear Confirmation Modal Dialog -->
+  <div id="clearModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-box text-center">
+      <div
+        class="w-12 h-12 rounded-full bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto mb-4 text-xl">
+        🗑️
+      </div>
+      <h3 id="modalTitle" class="text-lg font-bold text-slate-900 dark:text-white mb-2">
+        Clear Editor Text?
+      </h3>
+      <p class="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
+        This will erase all content currently in the editor and reset all live
+        statistics. This action cannot be undone.
+      </p>
+      <div class="flex items-center justify-center space-x-3">
+        <button id="cancelClearBtn" class="btn-secondary py-2 px-4 text-xs">
+          Cancel
+        </button>
+        <button id="confirmClearBtn"
+          class="btn-primary py-2 px-4 text-xs bg-rose-600 hover:bg-rose-700 shadow-rose-600/30">
+          Yes, Clear Everything
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gemini Result Modal Dialog -->
+  <div id="geminiResultModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="geminiModalTitle">
+    <div class="modal-box max-w-lg text-left">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-700 mb-4">
+        <div class="flex items-center space-x-2">
+          <span class="text-xl">✨</span>
+          <h3 id="geminiModalTitle" class="text-base font-bold text-slate-900 dark:text-white">
+            Gemini AI Assistant
+          </h3>
+        </div>
+        <span
+          class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
+          Gemini 1.5 Flash
+        </span>
+      </div>
+
+      <!-- Result Container -->
+      <div id="geminiResultContent" class="gemini-result-box mb-5">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Modal Actions -->
+      <div
+        class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
+        <div class="flex items-center space-x-2">
+          <button id="geminiReplaceBtn" class="btn-primary py-2 px-3 text-xs">
+            <span>Replace in Editor</span>
+          </button>
+          <button id="geminiInsertBtn" class="btn-secondary py-2 px-3 text-xs">
+            <span>Append to Draft</span>
+          </button>
+        </div>
+        <div class="flex items-center space-x-2">
+          <button id="geminiCopyBtn" class="btn-secondary py-2 px-3 text-xs" title="Copy to clipboard">
+            <span>📋 Copy</span>
+          </button>
+          <button id="geminiCloseBtn" class="btn-secondary py-2 px-3 text-xs">
+            <span>Close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gemini API Key Configuration Modal -->
+  <div id="geminiKeyModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="geminiKeyModalTitle">
+    <div class="modal-box text-left max-w-md">
+      <div class="flex items-center space-x-2 mb-3">
+        <span class="text-xl">⚙️</span>
+        <h3 id="geminiKeyModalTitle" class="text-base font-bold text-slate-900 dark:text-white">
+          Gemini API Key Settings
+        </h3>
+      </div>
+      <p class="text-xs text-slate-600 dark:text-slate-300 mb-4 leading-relaxed">
+        WriteFlow features a built-in intelligent client-side generation
+        engine. Optionally, you can connect your personal Google Gemini API
+        key to query live Gemini 1.5 Flash models directly from your browser.
+      </p>
+      <div class="mb-4">
+        <label for="geminiApiKeyInput"
+          class="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">Google Gemini API Key:</label>
+        <input id="geminiApiKeyInput" type="password" placeholder="AIzaSy..."
+          class="w-full px-3 py-2 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-800 dark:text-slate-100 focus:outline-none focus:border-indigo-500 font-mono" />
+        <span class="text-[11px] text-slate-400 mt-1 block">Keys are stored solely in your browser's local storage and
+          never
+          transmitted to our servers.</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <button id="geminiClearKeyBtn" class="btn-secondary py-1.5 px-3 text-xs text-rose-600 dark:text-rose-400">
+          Clear Key
+        </button>
+        <div class="flex items-center space-x-2">
+          <button id="geminiCancelKeyBtn" class="btn-secondary py-1.5 px-3 text-xs">
+            Cancel
+          </button>
+          <button id="geminiSaveKeyBtn" class="btn-primary py-1.5 px-3 text-xs">
+            Save Settings
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
